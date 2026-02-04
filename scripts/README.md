@@ -1,11 +1,12 @@
 # Utility Scripts
 
-Collection of utility scripts for project maintenance and verification.
+Collection of utility scripts for project maintenance, verification, and demonstration.
 
 ## Available Scripts
 
-### test_folder_structure.py
+### Verification Scripts
 
+#### test_folder_structure.py
 Verifies that the data folder structure is correctly set up.
 
 **Usage:**
@@ -13,30 +14,91 @@ Verifies that the data folder structure is correctly set up.
 python scripts/test_folder_structure.py
 ```
 
-**Expected Output:**
-```
-Checking folder structure...
-============================================================
-✓ data\raw\train
-✓ data\raw\validation
-✓ data\raw\test
-✓ data\processed\train
-✓ data\processed\validation
-✓ data\processed\test
-✓ data\perturbed\test
-============================================================
-✓ All folders exist!
-```
-
 **When to Use:**
 - After cloning the repository
 - Before running experiments
-- After making changes to data structure
 - When troubleshooting data loading issues
 
-**Exit Codes:**
-- `0`: All folders exist (success)
-- `1`: Some folders are missing (failure)
+#### verify_bert_requirements.py
+Verifies BERT dependencies and GPU availability.
+
+**Usage:**
+```bash
+python scripts/verify_bert_requirements.py
+```
+
+#### verify_visualizer_requirements.py
+Verifies visualization dependencies.
+
+**Usage:**
+```bash
+python scripts/verify_visualizer_requirements.py
+```
+
+### Validation Scripts
+
+#### validate_all_classifiers.py
+Trains and evaluates all classifiers (SVM+BoW, SVM+Embeddings, BERT) for complete pipeline validation.
+
+**Usage:**
+```bash
+python scripts/validate_all_classifiers.py
+```
+
+**Note:** This runs full training and may take time.
+
+#### validate_all_classifiers_quick.py
+Quick validation with reduced parameters for faster testing.
+
+**Usage:**
+```bash
+python scripts/validate_all_classifiers_quick.py
+```
+
+### Demo Scripts
+
+#### demo_evaluator.py
+Demonstrates the Evaluator module functionality.
+
+**Usage:**
+```bash
+python scripts/demo_evaluator.py
+```
+
+#### demo_simulation_runner.py
+Demonstrates running multiple simulations for statistical validation.
+
+**Usage:**
+```bash
+python scripts/demo_simulation_runner.py
+```
+
+#### demo_statistical_validator.py
+Demonstrates statistical significance testing.
+
+**Usage:**
+```bash
+python scripts/demo_statistical_validator.py
+```
+
+#### demo_visualizer_integration.py
+Demonstrates visualization generation.
+
+**Usage:**
+```bash
+python scripts/demo_visualizer_integration.py
+```
+
+## Script Categories
+
+### Verification (3 scripts)
+Quick checks to verify setup and dependencies.
+
+### Validation (2 scripts)
+End-to-end pipeline validation with model training.
+
+### Demo (4 scripts)
+Demonstrations of individual module functionality.
 
 ## Adding New Scripts
 
@@ -53,7 +115,7 @@ When adding utility scripts:
 Follow these conventions:
 - Use snake_case: `test_folder_structure.py`
 - Be descriptive: `validate_data_splits.py` not `check.py`
-- Prefix with action: `test_`, `validate_`, `generate_`, `cleanup_`
+- Prefix with action: `test_`, `validate_`, `demo_`, `verify_`
 
 ## Best Practices
 

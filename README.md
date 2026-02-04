@@ -70,7 +70,11 @@ sentiment-analysis-product-reviews/
 │   ├── advanced_analysis.py    # Advanced NLP analyses
 │   └── visualizer.py           # Visualization generation
 ├── scripts/                    # Utility scripts
-│   └── test_folder_structure.py
+│   ├── README.md               # Scripts documentation
+│   ├── test_folder_structure.py # Verify folder structure
+│   ├── demo_*.py               # Module demonstrations
+│   ├── validate_*.py           # Pipeline validation
+│   └── verify_*.py             # Dependency verification
 ├── results/                    # Experiment results
 │   ├── simulations/            # Metrics from multiple runs
 │   ├── statistical_tests/      # Statistical reports

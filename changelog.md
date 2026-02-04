@@ -22,6 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `DataLoader` class with new save/load methods
 - Updated path references in analysis scripts
 - Improved README with documentation links
+- Moved all demo, validation, and verification scripts to `scripts/` folder
+- Cleaned up root directory (removed duplicate files)
+
+### Removed
+- Duplicate `advanced_analysis.py` (kept in `src/`)
+- Duplicate `statistical_tests.py` (kept as `src/statistical_validator.py`)
 
 ### Fixed
 - Data leakage prevention through physical folder separation
