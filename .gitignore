@@ -1,0 +1,117 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Data files (large datasets)
+data/raw/*.csv
+data/raw/*.json
+data/raw/*.txt
+data/raw/*.zip
+data/processed/*.csv
+data/processed/*.json
+data/perturbed/*.csv
+
+# Model files (large binary files)
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.pt
+*.pth
+*.ckpt
+models/
+checkpoints/
+
+# Results and outputs (can be regenerated)
+results/simulations/*.csv
+results/predictions/*.npy
+results/plots/**/*.png
+results/plots/**/*.jpg
+results/plots/**/*.pdf
+
+# API keys and secrets
+.env
+.env.local
+*.key
+secrets.json
+config/secrets.py
+
+# Kiro specs (internal documentation)
+kiro/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Large embedding files
+*.bin
+*.vec
+embeddings/
+
+# Presentation files (optional - uncomment if you want to keep these private)
+# presentation/*.pptx
+# presentation/*.pdf
+# presentation/*.mp4
+
+# Keep directory structure but ignore contents
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/perturbed/.gitkeep
+!results/simulations/.gitkeep
+!results/statistical_tests/.gitkeep
+!results/advanced_analysis/.gitkeep
+!results/plots/.gitkeep
+!results/plots/boxplots/.gitkeep
+!results/plots/line_plots/.gitkeep
+!results/plots/statistical/.gitkeep
+!results/plots/advanced_analysis/.gitkeep

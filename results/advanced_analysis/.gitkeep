@@ -1,0 +1,7 @@
+# Advanced NLP analysis results directory
+# This directory will store results from:
+# - Length vs accuracy analysis
+# - Typo robustness analysis
+# - Emoji impact analysis
+# - Sarcasm analysis
+# - Formality analysis

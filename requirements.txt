@@ -1,0 +1,40 @@
+# Sentiment Analysis NLP - Dependencies
+# Requirements for the sentiment analysis pipeline comparing SVM+BoW, SVM+Embeddings, BERT, and ICL
+
+# Core
+pandas>=1.5.0
+numpy>=1.23.0
+matplotlib>=3.6.0
+seaborn>=0.12.0
+
+# NLP Classic
+scikit-learn>=1.2.0
+nltk>=3.8
+gensim>=4.3.0
+
+# BERT
+transformers>=4.35.0
+torch>=2.0.0
+datasets>=2.14.0
+accelerate>=0.24.0
+
+# LLM APIs
+openai>=1.3.0
+
+# Statistics
+scipy>=1.10.0
+statsmodels>=0.14.0
+
+# Text Perturbation
+nlpaug>=1.1.11
+
+# Emoji Detection
+emoji>=2.8.0
+
+# Testing
+hypothesis>=6.0.0
+pytest>=7.0.0
+
+# Utilities
+tqdm>=4.66.0
+joblib>=1.3.0

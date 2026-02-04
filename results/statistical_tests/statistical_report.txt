@@ -1,0 +1,77 @@
+================================================================================
+STATISTICAL VALIDATION REPORT
+================================================================================
+
+Significance level: α = 0.05 (95% confidence)
+Models analyzed: svm_bow, svm_embeddings, bert
+
+
+================================================================================
+KRUSKAL-WALLIS TEST (multiple groups)
+================================================================================
+
+Metric: ACCURACY
+  H statistic: 25.3006
+  p-value: 0.000003
+  Significant: YES
+  → There IS significant difference between models
+
+Metric: F1_SCORE
+  H statistic: 25.2929
+  p-value: 0.000003
+  Significant: YES
+  → There IS significant difference between models
+
+================================================================================
+WILCOXON PAIRED TESTS
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+Metric: ACCURACY
+────────────────────────────────────────────────────────────────────────────────
+
+svm_bow vs svm_embeddings:
+  Median svm_bow: 0.8604
+  Median svm_embeddings: 0.7974
+  p-value: 0.001953
+  Significant: YES
+  Winner: svm_bow
+
+svm_bow vs bert:
+  Median svm_bow: 0.8604
+  Median bert: 0.8970
+  p-value: 0.003906
+  Significant: YES
+  Winner: bert
+
+svm_embeddings vs bert:
+  Median svm_embeddings: 0.7974
+  Median bert: 0.8970
+  p-value: 0.001953
+  Significant: YES
+  Winner: bert
+
+────────────────────────────────────────────────────────────────────────────────
+Metric: F1_SCORE
+────────────────────────────────────────────────────────────────────────────────
+
+svm_bow vs svm_embeddings:
+  Median svm_bow: 0.8438
+  Median svm_embeddings: 0.7977
+  p-value: 0.001953
+  Significant: YES
+  Winner: svm_bow
+
+svm_bow vs bert:
+  Median svm_bow: 0.8438
+  Median bert: 0.9041
+  p-value: 0.001953
+  Significant: YES
+  Winner: bert
+
+svm_embeddings vs bert:
+  Median svm_embeddings: 0.7977
+  Median bert: 0.9041
+  p-value: 0.001953
+  Significant: YES
+  Winner: bert

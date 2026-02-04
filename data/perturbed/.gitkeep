@@ -1,0 +1,3 @@
+# Perturbed data directory
+# This directory will store test datasets with typos for robustness analysis
+# (5% character swaps, accent removal, letter duplication)
