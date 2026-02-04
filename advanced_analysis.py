@@ -340,7 +340,8 @@ class AdvancedNLPAnalysis:
 # EXEMPLO DE USO
 if __name__ == "__main__":
     # Carregar dados de teste e predições
-    test_df = pd.read_csv('data/processed/test.csv')
+    # Nota: Atualize o número da seed baseado no seu experimento
+    test_df = pd.read_csv('data/processed/test/test_seed42.csv')
     
     predictions = {
         'svm_bow': np.load('results/predictions/svm_bow_test.npy'),

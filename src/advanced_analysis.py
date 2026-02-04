@@ -341,7 +341,8 @@ class AdvancedNLPAnalysis:
 # USAGE EXAMPLE
 if __name__ == "__main__":
     # Load test data and predictions
-    test_df = pd.read_csv('data/processed/test.csv')
+    # Note: Update the seed number based on your experiment
+    test_df = pd.read_csv('data/processed/test/test_seed42.csv')
     
     predictions = {
         'svm_bow': np.load('results/predictions/svm_bow_test.npy'),

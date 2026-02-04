@@ -1,5 +1,4 @@
 """
-Task 11 Checkpoint: Validate All Classifiers
 This script trains and evaluates all three implemented classifiers:
 1. SVM + Bag of Words (TF-IDF)
 2. SVM + Embeddings (GloVe)

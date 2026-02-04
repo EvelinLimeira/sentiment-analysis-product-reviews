@@ -12,6 +12,8 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 import logging
+import os
+from pathlib import Path
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -54,6 +56,12 @@ class DataLoader:
     # Minimum required reviews for a valid dataset
     MIN_REVIEWS = 3000
     IDEAL_REVIEWS = 5000
+    
+    # Data directory paths
+    DATA_DIR = Path('data')
+    RAW_DIR = DATA_DIR / 'raw'
+    PROCESSED_DIR = DATA_DIR / 'processed'
+    PERTURBED_DIR = DATA_DIR / 'perturbed'
     
     def __init__(
         self, 
@@ -463,6 +471,149 @@ class DataLoader:
         self.val_df = None
         self.test_df = None
     
+    def save_splits(self, format: str = 'csv') -> None:
+        """
+        Save train, validation, and test splits to disk.
+        
+        Saves splits to the organized folder structure:
+        - data/raw/train/
+        - data/raw/validation/
+        - data/raw/test/
+        
+        Args:
+            format: File format ('csv' or 'parquet')
+            
+        Raises:
+            ValueError: If data has not been loaded yet
+        """
+        if self.train_df is None or self.val_df is None or self.test_df is None:
+            raise ValueError("Data has not been loaded yet. Call load() first.")
+        
+        # Create directories if they don't exist
+        (self.RAW_DIR / 'train').mkdir(parents=True, exist_ok=True)
+        (self.RAW_DIR / 'validation').mkdir(parents=True, exist_ok=True)
+        (self.RAW_DIR / 'test').mkdir(parents=True, exist_ok=True)
+        
+        # Define file paths
+        if format == 'csv':
+            train_path = self.RAW_DIR / 'train' / f'train_seed{self.random_state}.csv'
+            val_path = self.RAW_DIR / 'validation' / f'validation_seed{self.random_state}.csv'
+            test_path = self.RAW_DIR / 'test' / f'test_seed{self.random_state}.csv'
+            
+            # Save as CSV
+            self.train_df.to_csv(train_path, index=False)
+            self.val_df.to_csv(val_path, index=False)
+            self.test_df.to_csv(test_path, index=False)
+        elif format == 'parquet':
+            train_path = self.RAW_DIR / 'train' / f'train_seed{self.random_state}.parquet'
+            val_path = self.RAW_DIR / 'validation' / f'validation_seed{self.random_state}.parquet'
+            test_path = self.RAW_DIR / 'test' / f'test_seed{self.random_state}.parquet'
+            
+            # Save as Parquet
+            self.train_df.to_parquet(train_path, index=False)
+            self.val_df.to_parquet(val_path, index=False)
+            self.test_df.to_parquet(test_path, index=False)
+        else:
+            raise ValueError(f"Unsupported format: {format}. Use 'csv' or 'parquet'.")
+        
+        logger.info(f"Saved splits to {self.RAW_DIR} (seed={self.random_state})")
+    
+    def load_splits(self, format: str = 'csv') -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """
+        Load train, validation, and test splits from disk.
+        
+        Loads splits from the organized folder structure:
+        - data/raw/train/
+        - data/raw/validation/
+        - data/raw/test/
+        
+        Args:
+            format: File format ('csv' or 'parquet')
+            
+        Returns:
+            Tuple[train_df, val_df, test_df] with columns ['text', 'label']
+            
+        Raises:
+            FileNotFoundError: If split files don't exist
+        """
+        # Define file paths
+        if format == 'csv':
+            train_path = self.RAW_DIR / 'train' / f'train_seed{self.random_state}.csv'
+            val_path = self.RAW_DIR / 'validation' / f'validation_seed{self.random_state}.csv'
+            test_path = self.RAW_DIR / 'test' / f'test_seed{self.random_state}.csv'
+            
+            # Load from CSV
+            self.train_df = pd.read_csv(train_path)
+            self.val_df = pd.read_csv(val_path)
+            self.test_df = pd.read_csv(test_path)
+        elif format == 'parquet':
+            train_path = self.RAW_DIR / 'train' / f'train_seed{self.random_state}.parquet'
+            val_path = self.RAW_DIR / 'validation' / f'validation_seed{self.random_state}.parquet'
+            test_path = self.RAW_DIR / 'test' / f'test_seed{self.random_state}.parquet'
+            
+            # Load from Parquet
+            self.train_df = pd.read_parquet(train_path)
+            self.val_df = pd.read_parquet(val_path)
+            self.test_df = pd.read_parquet(test_path)
+        else:
+            raise ValueError(f"Unsupported format: {format}. Use 'csv' or 'parquet'.")
+        
+        logger.info(f"Loaded splits from {self.RAW_DIR} (seed={self.random_state})")
+        
+        return self.train_df, self.val_df, self.test_df
+    
+    def save_processed_splits(self, train_processed: pd.DataFrame, 
+                             val_processed: pd.DataFrame, 
+                             test_processed: pd.DataFrame,
+                             suffix: str = '',
+                             format: str = 'csv') -> None:
+        """
+        Save processed train, validation, and test splits to disk.
+        
+        Saves processed splits to:
+        - data/processed/train/
+        - data/processed/validation/
+        - data/processed/test/
+        
+        Args:
+            train_processed: Processed training DataFrame
+            val_processed: Processed validation DataFrame
+            test_processed: Processed test DataFrame
+            suffix: Optional suffix for filename (e.g., 'bow', 'embeddings')
+            format: File format ('csv' or 'parquet')
+        """
+        # Create directories if they don't exist
+        (self.PROCESSED_DIR / 'train').mkdir(parents=True, exist_ok=True)
+        (self.PROCESSED_DIR / 'validation').mkdir(parents=True, exist_ok=True)
+        (self.PROCESSED_DIR / 'test').mkdir(parents=True, exist_ok=True)
+        
+        # Build filename
+        suffix_str = f'_{suffix}' if suffix else ''
+        
+        # Define file paths
+        if format == 'csv':
+            train_path = self.PROCESSED_DIR / 'train' / f'train{suffix_str}_seed{self.random_state}.csv'
+            val_path = self.PROCESSED_DIR / 'validation' / f'validation{suffix_str}_seed{self.random_state}.csv'
+            test_path = self.PROCESSED_DIR / 'test' / f'test{suffix_str}_seed{self.random_state}.csv'
+            
+            # Save as CSV
+            train_processed.to_csv(train_path, index=False)
+            val_processed.to_csv(val_path, index=False)
+            test_processed.to_csv(test_path, index=False)
+        elif format == 'parquet':
+            train_path = self.PROCESSED_DIR / 'train' / f'train{suffix_str}_seed{self.random_state}.parquet'
+            val_path = self.PROCESSED_DIR / 'validation' / f'validation{suffix_str}_seed{self.random_state}.parquet'
+            test_path = self.PROCESSED_DIR / 'test' / f'test{suffix_str}_seed{self.random_state}.parquet'
+            
+            # Save as Parquet
+            train_processed.to_parquet(train_path, index=False)
+            val_processed.to_parquet(val_path, index=False)
+            test_processed.to_parquet(test_path, index=False)
+        else:
+            raise ValueError(f"Unsupported format: {format}. Use 'csv' or 'parquet'.")
+        
+        logger.info(f"Saved processed splits to {self.PROCESSED_DIR} (seed={self.random_state}, suffix='{suffix}')")
+    
     def get_sample_reviews(self, n: int = 5) -> Dict[str, List[Dict]]:
         """
         Get sample reviews from each split for inspection.
@@ -485,3 +636,33 @@ class DataLoader:
             'val': sample_from_df(self.val_df, n),
             'test': sample_from_df(self.test_df, n)
         }
+    
+    def save_perturbed_test(self, perturbed_df: pd.DataFrame, 
+                           perturbation_type: str = 'typos',
+                           format: str = 'csv') -> None:
+        """
+        Save perturbed test data to disk.
+        
+        Saves perturbed test data to:
+        - data/perturbed/test/
+        
+        Args:
+            perturbed_df: Perturbed test DataFrame
+            perturbation_type: Type of perturbation (e.g., 'typos', 'emojis')
+            format: File format ('csv' or 'parquet')
+        """
+        # Create directory if it doesn't exist
+        (self.PERTURBED_DIR / 'test').mkdir(parents=True, exist_ok=True)
+        
+        # Define file path
+        if format == 'csv':
+            path = self.PERTURBED_DIR / 'test' / f'test_{perturbation_type}_seed{self.random_state}.csv'
+            perturbed_df.to_csv(path, index=False)
+        elif format == 'parquet':
+            path = self.PERTURBED_DIR / 'test' / f'test_{perturbation_type}_seed{self.random_state}.parquet'
+            perturbed_df.to_parquet(path, index=False)
+        else:
+            raise ValueError(f"Unsupported format: {format}. Use 'csv' or 'parquet'.")
+        
+        logger.info(f"Saved perturbed test data to {path}")
+

@@ -41,13 +41,25 @@ venv.bak/
 .vscode/
 
 # Data files (large datasets)
-data/raw/*.csv
-data/raw/*.json
-data/raw/*.txt
-data/raw/*.zip
-data/processed/*.csv
-data/processed/*.json
-data/perturbed/*.csv
+# Keep folder structure but ignore data files
+data/raw/**/*.csv
+data/raw/**/*.json
+data/raw/**/*.txt
+data/raw/**/*.zip
+data/raw/**/*.parquet
+data/processed/**/*.csv
+data/processed/**/*.json
+data/processed/**/*.parquet
+data/perturbed/**/*.csv
+data/perturbed/**/*.parquet
+
+# Keep .gitkeep files
+!data/raw/.gitkeep
+!data/raw/**/.gitkeep
+!data/processed/.gitkeep
+!data/processed/**/.gitkeep
+!data/perturbed/.gitkeep
+!data/perturbed/**/.gitkeep
 
 # Model files (large binary files)
 *.pkl
@@ -75,7 +87,8 @@ secrets.json
 config/secrets.py
 
 # Kiro specs (internal documentation)
-kiro/
+# Uncomment if you want to keep specs private
+.kiro/
 
 # OS files
 .DS_Store
@@ -105,13 +118,14 @@ embeddings/
 
 # Keep directory structure but ignore contents
 !data/raw/.gitkeep
+!data/raw/**/.gitkeep
 !data/processed/.gitkeep
+!data/processed/**/.gitkeep
 !data/perturbed/.gitkeep
+!data/perturbed/**/.gitkeep
 !results/simulations/.gitkeep
 !results/statistical_tests/.gitkeep
 !results/advanced_analysis/.gitkeep
 !results/plots/.gitkeep
-!results/plots/boxplots/.gitkeep
-!results/plots/line_plots/.gitkeep
-!results/plots/statistical/.gitkeep
-!results/plots/advanced_analysis/.gitkeep
+!results/plots/**/.gitkeep
+!notebooks/.gitkeep
