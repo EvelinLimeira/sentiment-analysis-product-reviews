@@ -58,10 +58,10 @@ class BERTClassifier:
         self,
         model_name: str = 'distilbert-base-uncased',
         max_length: int = 512,
-        batch_size: int = 16,
+        batch_size: int = 32,
         learning_rate: float = 2e-5,
-        num_epochs: int = 3,
-        patience: int = 2,
+        num_epochs: int = 10,
+        patience: int = 3,
         device: str = None
     ):
         """
@@ -70,10 +70,10 @@ class BERTClassifier:
         Args:
             model_name: HuggingFace model name (default: distilbert-base-uncased)
             max_length: Maximum sequence length for tokenization
-            batch_size: Batch size for training and inference
+            batch_size: Batch size for training and inference (default: 32)
             learning_rate: Learning rate for fine-tuning
-            num_epochs: Maximum number of training epochs
-            patience: Early stopping patience (epochs without improvement)
+            num_epochs: Maximum number of training epochs (default: 10)
+            patience: Early stopping patience (epochs without improvement, default: 3)
             device: Device to use ('cuda', 'cpu', or None for auto-detect)
         """
         self.model_name = model_name
@@ -174,6 +174,11 @@ class BERTClassifier:
         # Training loop with early stopping
         best_val_loss = float('inf')
         epochs_without_improvement = 0
+        best_epoch = 0
+        
+        print(f"\nStarting training for {self.num_epochs} epochs (early stopping patience: {self.patience})")
+        print(f"Device: {self.device} | Batch size: {self.batch_size} | Learning rate: {self.learning_rate}")
+        print("-" * 80)
         
         for epoch in range(self.num_epochs):
             # Training phase
@@ -235,23 +240,36 @@ class BERTClassifier:
             avg_val_loss = val_loss / len(val_loader)
             val_accuracy = val_correct / val_total
             
-            print(f'Epoch {epoch + 1}/{self.num_epochs} - Train Loss: {avg_train_loss:.4f}, Train Acc: {train_accuracy:.4f} - Val Loss: {avg_val_loss:.4f}, Val Acc: {val_accuracy:.4f}')
+            # Print epoch summary
+            improvement_marker = ""
+            if avg_val_loss < best_val_loss:
+                improvement_marker = " ✓ [BEST]"
+            
+            print(f'Epoch {epoch + 1}/{self.num_epochs} - '
+                  f'Train Loss: {avg_train_loss:.4f}, Train Acc: {train_accuracy:.4f} | '
+                  f'Val Loss: {avg_val_loss:.4f}, Val Acc: {val_accuracy:.4f}{improvement_marker}')
             
             # Early stopping check
             if avg_val_loss < best_val_loss:
                 best_val_loss = avg_val_loss
                 epochs_without_improvement = 0
+                best_epoch = epoch + 1
                 # Save best model state
                 self.best_model_state = self.model.state_dict()
             else:
                 epochs_without_improvement += 1
                 if epochs_without_improvement >= self.patience:
-                    print(f'Early stopping triggered after {epoch + 1} epochs')
+                    print(f'\n⚠ Early stopping triggered after {epoch + 1} epochs')
+                    print(f'  Best validation loss: {best_val_loss:.4f} at epoch {best_epoch}')
+                    print(f'  No improvement for {self.patience} consecutive epochs')
                     break
         
         # Load best model state
         if hasattr(self, 'best_model_state'):
             self.model.load_state_dict(self.best_model_state)
+            print(f'\n✓ Loaded best model from epoch {best_epoch}')
+        
+        print("-" * 80)
         
         self.is_fitted = True
         return self

@@ -11,7 +11,7 @@ from pathlib import Path
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import get_quick_test_config
+from src.config import ExperimentConfig
 from src.simulation_runner import SimulationRunner
 
 
@@ -29,24 +29,38 @@ def main():
     args = parser.parse_args()
     
     print("=" * 80)
-    print("BERT SIMULATIONS ONLY")
+    print("BERT SIMULATIONS ONLY - IMPROVED TRAINING")
     print("=" * 80)
     print(f"\nConfiguration:")
     print(f"  Total simulations: {args.num_simulations}")
     print(f"  Starting from: {args.start_from}")
     print(f"  Base seed: {args.base_seed}")
+    print(f"  BERT epochs: 10 (with early stopping)")
+    print(f"  BERT batch size: 32")
+    print(f"  Early stopping patience: 3")
     print()
     
-    # Use quick config for faster training
-    config = get_quick_test_config()
-    config.num_simulations = args.num_simulations
+    # Use full config with improved BERT settings
+    config = ExperimentConfig(
+        dataset_name='amazon_reviews',
+        num_simulations=args.num_simulations
+    )
+    
+    print(f"BERT Configuration:")
+    print(f"  Model: {config.bert_model}")
+    print(f"  Max length: {config.bert_max_length}")
+    print(f"  Batch size: {config.bert_batch_size}")
+    print(f"  Epochs: {config.bert_epochs}")
+    print(f"  Learning rate: {config.bert_learning_rate}")
+    print()
     
     # Initialize runner
     runner = SimulationRunner(config, output_dir='results/simulations')
     
     # Run only BERT simulations
-    print("Starting BERT simulations with GPU acceleration...")
-    print("This will take approximately 1-2 hours for 30 simulations.")
+    print("Starting BERT simulations with improved training...")
+    print("Expected time: ~3-5 minutes per simulation on GPU")
+    print(f"Total estimated time: ~{args.num_simulations * 4} minutes")
     print()
     
     results = runner.run_simulations(

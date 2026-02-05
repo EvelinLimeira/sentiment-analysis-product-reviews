@@ -163,9 +163,10 @@ def main():
     bert = BERTClassifier(
         model_name='distilbert-base-uncased',
         max_length=512,
-        batch_size=16,
+        batch_size=32,
         learning_rate=2e-5,
-        num_epochs=3
+        num_epochs=10,
+        patience=3
     )
     print(f"✓ BERT initialized (device: {bert.device})")
     

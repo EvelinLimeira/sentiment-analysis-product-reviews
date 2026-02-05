@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Google Colab notebook (`notebooks/sentiment_analysis_colab.ipynb`) for cloud-based execution
+- Jupyter notebook infrastructure with template and creation scripts
+- Notebook documentation in `notebooks/README.md`
+- Interactive notebook support with VS Code cell markers
 - Comprehensive documentation structure in `docs/` directory
 - Professional folder organization for data pipeline
 - Data structure with train/validation/test separation

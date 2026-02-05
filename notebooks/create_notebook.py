@@ -107,8 +107,8 @@ config = ExperimentConfig(
     # BERT
     bert_model='distilbert-base-uncased',
     bert_max_length=512,
-    bert_batch_size=16,
-    bert_epochs=3,
+    bert_batch_size=32,
+    bert_epochs=10,
     bert_learning_rate=2e-5
 )
 

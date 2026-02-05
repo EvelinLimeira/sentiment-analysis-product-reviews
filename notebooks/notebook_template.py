@@ -181,8 +181,9 @@ print(f"  F1-Score: {metrics['f1_macro']:.4f}")
 print("Training BERT...")
 classifier_bert = BERTClassifier(
     model_name='distilbert-base-uncased',
-    batch_size=16,
-    num_epochs=3
+    batch_size=32,
+    num_epochs=10,
+    patience=3
 )
 
 start = time.time()

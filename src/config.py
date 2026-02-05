@@ -79,8 +79,8 @@ class ExperimentConfig:
     # BERT configuration
     bert_model: str = 'distilbert-base-uncased'
     bert_max_length: int = 512
-    bert_batch_size: int = 16
-    bert_epochs: int = 3
+    bert_batch_size: int = 32
+    bert_epochs: int = 10
     bert_learning_rate: float = 2e-5
     
     # ICL configuration

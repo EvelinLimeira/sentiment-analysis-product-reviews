@@ -98,7 +98,15 @@ sentiment-analysis-product-reviews/
 - GPU recommended for BERT training (8GB VRAM minimum)
 - API key for LLM (OpenAI, Claude, or Gemini) for bonus ICL classifier
 
-### Installation
+### Quick Start Options
+
+#### Option 1: Google Colab (Recommended for Beginners)
+Run the project in your browser with free GPU access:
+1. Open [sentiment_analysis_colab.ipynb](notebooks/sentiment_analysis_colab.ipynb) in Google Colab
+2. Select GPU runtime: `Runtime` → `Change runtime type` → `GPU`
+3. Run all cells
+
+#### Option 2: Local Installation
 
 1. Clone the repository:
 ```bash
@@ -122,6 +130,9 @@ pip install -r requirements.txt
 python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')"
 ```
 
+#### Option 3: Jupyter Notebook
+See [notebooks/README.md](notebooks/README.md) for interactive notebook options.
+
 ### Dataset
 
 The project uses product review datasets with ratings (1-5 stars):
@@ -137,6 +148,16 @@ Recommended datasets:
 Minimum: 3,000 reviews | Ideal: 5,000+ reviews
 
 ## Usage
+
+### Interactive Notebooks
+
+For a guided walkthrough, use the Jupyter notebooks:
+
+- **[Google Colab](notebooks/sentiment_analysis_colab.ipynb)**: Run in browser with free GPU
+- **[Local Notebook](notebooks/sentiment_analysis_pipeline.ipynb)**: Run locally with Jupyter
+- See [notebooks/README.md](notebooks/README.md) for more options
+
+### Command Line Usage
 
 ### 1. Data Preparation
 
@@ -272,6 +293,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **Evelin Limeira**
 - GitHub: [@EvelinLimeira](https://github.com/EvelinLimeira)
+
+**Bruno Lutiano**
 
 ## Acknowledgments
 

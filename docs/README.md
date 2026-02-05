@@ -22,6 +22,12 @@ docs/
 - [Visualizer Guide](guides/visualizer.md) - Create visualizations
 - [Example Code](examples/example_data_structure.py) - Working example
 
+## Notebooks
+
+- [Notebooks README](../notebooks/README.md) - Jupyter notebook documentation
+- [Colab Notebook](../notebooks/sentiment_analysis_colab.ipynb) - Run on Google Colab
+- [Pipeline Notebook](../notebooks/sentiment_analysis_pipeline.ipynb) - Complete pipeline
+
 ## Root Documentation
 
 - [README.md](../README.md) - Main project documentation
