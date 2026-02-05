@@ -5,7 +5,6 @@ This module provides the BoWVectorizer class for converting preprocessed texts
 to TF-IDF vectors. It follows the fit/transform pattern to prevent data leakage
 by fitting only on training data.
 
-Requirements: 3.1, 3.2, 3.3
 """
 
 from typing import List, Tuple, Optional

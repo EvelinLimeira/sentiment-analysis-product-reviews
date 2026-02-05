@@ -5,17 +5,18 @@ This module provides functionality to run multiple simulations (N runs with diff
 random seeds) for statistical validation of model performance. Each simulation trains
 and evaluates models with different data splits and initializations.
 
-Requirements: 7.1, 7.2, 7.8
 """
 
 import time
 import logging
 from dataclasses import dataclass, asdict
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
+import joblib
+import json
 
 from src.config import ExperimentConfig
 from src.data_loader import DataLoader
@@ -29,6 +30,15 @@ from src.evaluator import Evaluator
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Suppress verbose logging from dependencies
+logging.getLogger('src.data_loader').setLevel(logging.WARNING)
+logging.getLogger('src.preprocessor').setLevel(logging.WARNING)
+logging.getLogger('src.embedding_encoder').setLevel(logging.WARNING)
+logging.getLogger('gensim').setLevel(logging.WARNING)
+logging.getLogger('httpx').setLevel(logging.WARNING)
+logging.getLogger('transformers').setLevel(logging.ERROR)
+logging.getLogger('transformers.modeling_utils').setLevel(logging.ERROR)
 
 
 @dataclass
@@ -81,15 +91,23 @@ class SimulationRunner:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
+        # Create models directory
+        self.models_dir = Path('results/models')
+        self.models_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Track best models
+        self.best_models: Dict[str, Dict[str, Any]] = {}
+        
         logger.info(f"SimulationRunner initialized with {config.num_simulations} simulations")
         logger.info(f"Results will be saved to: {self.output_dir}")
+        logger.info(f"Best models will be saved to: {self.models_dir}")
     
     def run_single_simulation(
         self,
         model_name: str,
         simulation_id: int,
         random_seed: int
-    ) -> SimulationResult:
+    ) -> Tuple[SimulationResult, Dict[str, Any]]:
         """
         Run a single simulation for a specific model.
         
@@ -99,7 +117,7 @@ class SimulationRunner:
             random_seed: Random seed for this simulation
             
         Returns:
-            SimulationResult with all metrics
+            Tuple of (SimulationResult, model_artifacts)
             
         Raises:
             ValueError: If model_name is not recognized
@@ -125,21 +143,21 @@ class SimulationRunner:
         
         # Train and evaluate based on model type
         if model_name == 'svm_bow':
-            result = self._run_svm_bow(
+            result, artifacts = self._run_svm_bow(
                 train_texts, train_labels,
                 val_texts, val_labels,
                 test_texts, test_labels,
                 simulation_id, random_seed
             )
         elif model_name == 'svm_embeddings':
-            result = self._run_svm_embeddings(
+            result, artifacts = self._run_svm_embeddings(
                 train_texts, train_labels,
                 val_texts, val_labels,
                 test_texts, test_labels,
                 simulation_id, random_seed
             )
         elif model_name == 'bert':
-            result = self._run_bert(
+            result, artifacts = self._run_bert(
                 train_texts, train_labels,
                 val_texts, val_labels,
                 test_texts, test_labels,
@@ -151,12 +169,10 @@ class SimulationRunner:
                 f"Expected 'svm_bow', 'svm_embeddings', or 'bert'"
             )
         
-        logger.info(
-            f"Simulation {simulation_id} complete: "
-            f"accuracy={result.accuracy:.4f}, f1_macro={result.f1_macro:.4f}"
-        )
+        # Only log completion without detailed info (progress bar shows this)
+        pass
         
-        return result
+        return result, artifacts
     
     def _run_svm_bow(
         self,
@@ -168,14 +184,17 @@ class SimulationRunner:
         test_labels: np.ndarray,
         simulation_id: int,
         random_seed: int
-    ) -> SimulationResult:
+    ) -> Tuple[SimulationResult, Dict[str, Any]]:
         """Run SVM with Bag of Words model."""
         # Preprocess texts
+        print(f"  [Sim {simulation_id}] Preprocessing texts...", end=" ", flush=True)
         preprocessor = Preprocessor(language='english', remove_stopwords=True)
         train_texts_processed = preprocessor.fit_transform(train_texts)
         test_texts_processed = preprocessor.transform(test_texts)
+        print("✓")
         
         # Vectorize with TF-IDF
+        print(f"  [Sim {simulation_id}] Vectorizing with TF-IDF...", end=" ", flush=True)
         vectorizer = BoWVectorizer(
             max_features=self.config.tfidf_max_features,
             ngram_range=self.config.tfidf_ngram_range
@@ -184,14 +203,19 @@ class SimulationRunner:
         # Training
         start_time = time.time()
         X_train = vectorizer.fit_transform(train_texts_processed)
+        print("✓")
+        
+        print(f"  [Sim {simulation_id}] Training SVM classifier...", end=" ", flush=True)
         classifier = SVMClassifier(
             kernel=self.config.svm_bow_kernel,
             C=self.config.svm_bow_C
         )
         classifier.fit(X_train, train_labels)
         training_time = time.time() - start_time
+        print(f"✓ ({training_time:.2f}s)")
         
         # Inference
+        print(f"  [Sim {simulation_id}] Evaluating on test set...", end=" ", flush=True)
         start_time = time.time()
         X_test = vectorizer.transform(test_texts_processed)
         predictions = classifier.predict(X_test)
@@ -200,8 +224,16 @@ class SimulationRunner:
         # Evaluate
         evaluator = Evaluator()
         metrics = evaluator.evaluate(test_labels, predictions, 'svm_bow')
+        print(f"✓ Acc: {metrics['accuracy']:.4f}, F1: {metrics['f1_macro']:.4f}")
         
-        return SimulationResult(
+        # Package model artifacts
+        model_artifacts = {
+            'preprocessor': preprocessor,
+            'vectorizer': vectorizer,
+            'classifier': classifier
+        }
+        
+        result = SimulationResult(
             simulation_id=simulation_id,
             model_name='svm_bow',
             random_seed=random_seed,
@@ -213,6 +245,8 @@ class SimulationRunner:
             training_time=training_time,
             inference_time=inference_time
         )
+        
+        return result, model_artifacts
     
     def _run_svm_embeddings(
         self,
@@ -224,19 +258,25 @@ class SimulationRunner:
         test_labels: np.ndarray,
         simulation_id: int,
         random_seed: int
-    ) -> SimulationResult:
+    ) -> Tuple[SimulationResult, Dict[str, Any]]:
         """Run SVM with Embeddings model."""
         # Preprocess texts
+        print(f"  [Sim {simulation_id}] Preprocessing texts...", end=" ", flush=True)
         preprocessor = Preprocessor(language='english', remove_stopwords=True)
         train_texts_processed = preprocessor.fit_transform(train_texts)
         test_texts_processed = preprocessor.transform(test_texts)
+        print("✓")
         
         # Encode with embeddings
+        print(f"  [Sim {simulation_id}] Encoding with GloVe embeddings...", end=" ", flush=True)
         encoder = EmbeddingEncoder(model_name=self.config.embedding_model)
         
         # Training
         start_time = time.time()
         X_train = encoder.encode_batch(train_texts_processed)
+        print("✓")
+        
+        print(f"  [Sim {simulation_id}] Training SVM classifier...", end=" ", flush=True)
         classifier = SVMClassifier(
             kernel=self.config.svm_emb_kernel,
             C=self.config.svm_emb_C,
@@ -244,8 +284,10 @@ class SimulationRunner:
         )
         classifier.fit(X_train, train_labels)
         training_time = time.time() - start_time
+        print(f"✓ ({training_time:.2f}s)")
         
         # Inference
+        print(f"  [Sim {simulation_id}] Evaluating on test set...", end=" ", flush=True)
         start_time = time.time()
         X_test = encoder.encode_batch(test_texts_processed)
         predictions = classifier.predict(X_test)
@@ -254,8 +296,16 @@ class SimulationRunner:
         # Evaluate
         evaluator = Evaluator()
         metrics = evaluator.evaluate(test_labels, predictions, 'svm_embeddings')
+        print(f"✓ Acc: {metrics['accuracy']:.4f}, F1: {metrics['f1_macro']:.4f}")
         
-        return SimulationResult(
+        # Package model artifacts
+        model_artifacts = {
+            'preprocessor': preprocessor,
+            'encoder': encoder,
+            'classifier': classifier
+        }
+        
+        result = SimulationResult(
             simulation_id=simulation_id,
             model_name='svm_embeddings',
             random_seed=random_seed,
@@ -267,6 +317,8 @@ class SimulationRunner:
             training_time=training_time,
             inference_time=inference_time
         )
+        
+        return result, model_artifacts
     
     def _run_bert(
         self,
@@ -278,9 +330,10 @@ class SimulationRunner:
         test_labels: np.ndarray,
         simulation_id: int,
         random_seed: int
-    ) -> SimulationResult:
+    ) -> Tuple[SimulationResult, Dict[str, Any]]:
         """Run BERT model."""
         # BERT uses raw text (no preprocessing)
+        print(f"\n  [Sim {simulation_id}] Training BERT model...")
         
         # Training
         start_time = time.time()
@@ -298,6 +351,7 @@ class SimulationRunner:
         training_time = time.time() - start_time
         
         # Inference
+        print(f"  [Sim {simulation_id}] Evaluating on test set...", end=" ", flush=True)
         start_time = time.time()
         predictions = classifier.predict(test_texts)
         inference_time = time.time() - start_time
@@ -305,8 +359,14 @@ class SimulationRunner:
         # Evaluate
         evaluator = Evaluator()
         metrics = evaluator.evaluate(test_labels, predictions, 'bert')
+        print(f"✓ Acc: {metrics['accuracy']:.4f}, F1: {metrics['f1_macro']:.4f}\n")
         
-        return SimulationResult(
+        # Package model artifacts
+        model_artifacts = {
+            'classifier': classifier
+        }
+        
+        result = SimulationResult(
             simulation_id=simulation_id,
             model_name='bert',
             random_seed=random_seed,
@@ -318,6 +378,8 @@ class SimulationRunner:
             training_time=training_time,
             inference_time=inference_time
         )
+        
+        return result, model_artifacts
     
     def run_simulations(
         self,
@@ -347,11 +409,15 @@ class SimulationRunner:
         all_results = {}
         
         for model_name in model_names:
-            logger.info(f"\n{'='*80}")
-            logger.info(f"Running simulations for {model_name}")
-            logger.info(f"{'='*80}")
+            print("\n" + "="*80)
+            print(f"TRAINING: {model_name.upper().replace('_', ' + ')}")
+            print(f"Simulations: {self.config.num_simulations} | Seeds: {base_seed} to {base_seed + self.config.num_simulations - 1}")
+            print("="*80 + "\n")
             
             results = []
+            best_f1 = -1
+            best_artifacts = None
+            best_result = None
             
             # Run N simulations with different seeds
             for sim_id in tqdm(
@@ -362,12 +428,18 @@ class SimulationRunner:
                 random_seed = base_seed + sim_id
                 
                 try:
-                    result = self.run_single_simulation(
+                    result, artifacts = self.run_single_simulation(
                         model_name=model_name,
                         simulation_id=sim_id,
                         random_seed=random_seed
                     )
                     results.append(result)
+                    
+                    # Track best model based on F1 macro score
+                    if result.f1_macro > best_f1:
+                        best_f1 = result.f1_macro
+                        best_artifacts = artifacts
+                        best_result = result
                     
                 except Exception as e:
                     logger.error(
@@ -385,19 +457,87 @@ class SimulationRunner:
                 # Save to CSV
                 output_file = self.output_dir / f"{model_name}_simulations.csv"
                 df.to_csv(output_file, index=False)
-                logger.info(f"Saved results to: {output_file}")
+                
+                # Save best model
+                if best_artifacts and best_result:
+                    self._save_best_model(model_name, best_result, best_artifacts)
                 
                 # Log summary statistics
+                print("\n" + "-"*80)
+                print(f"SUMMARY: {model_name.upper().replace('_', ' + ')}")
+                print("-"*80)
                 self._log_summary_statistics(model_name, df)
+                print(f"Results saved: {output_file}")
+                print("-"*80 + "\n")
             else:
                 logger.warning(f"No successful simulations for {model_name}")
         
-        logger.info(f"\n{'='*80}")
-        logger.info("All simulations complete!")
-        logger.info(f"Results saved to: {self.output_dir}")
-        logger.info(f"{'='*80}\n")
+        print("\n" + "="*80)
+        print("ALL SIMULATIONS COMPLETE!")
+        print(f"Results: {self.output_dir}")
+        print(f"Models: {self.models_dir}")
+        print("="*80 + "\n")
         
         return all_results
+    
+    def _save_best_model(
+        self,
+        model_name: str,
+        result: SimulationResult,
+        artifacts: Dict[str, Any]
+    ) -> None:
+        """
+        Save the best model and its artifacts.
+        
+        Args:
+            model_name: Name of the model
+            result: SimulationResult for the best model
+            artifacts: Model artifacts (preprocessor, vectorizer, classifier, etc.)
+        """
+        model_dir = self.models_dir / model_name
+        model_dir.mkdir(parents=True, exist_ok=True)
+        
+        logger.info(f"\nSaving best {model_name} model (F1={result.f1_macro:.4f}, seed={result.random_seed})")
+        
+        # Save metadata
+        metadata = {
+            'model_name': model_name,
+            'simulation_id': result.simulation_id,
+            'random_seed': result.random_seed,
+            'accuracy': result.accuracy,
+            'precision_macro': result.precision_macro,
+            'recall_macro': result.recall_macro,
+            'f1_macro': result.f1_macro,
+            'f1_weighted': result.f1_weighted,
+            'training_time': result.training_time,
+            'inference_time': result.inference_time
+        }
+        
+        metadata_file = model_dir / 'metadata.json'
+        with open(metadata_file, 'w') as f:
+            json.dump(metadata, f, indent=2)
+        
+        # Save model artifacts based on model type
+        if model_name == 'svm_bow':
+            joblib.dump(artifacts['preprocessor'], model_dir / 'preprocessor.pkl')
+            joblib.dump(artifacts['vectorizer'], model_dir / 'vectorizer.pkl')
+            joblib.dump(artifacts['classifier'], model_dir / 'classifier.pkl')
+            logger.info(f"  Saved: preprocessor.pkl, vectorizer.pkl, classifier.pkl")
+            
+        elif model_name == 'svm_embeddings':
+            joblib.dump(artifacts['preprocessor'], model_dir / 'preprocessor.pkl')
+            joblib.dump(artifacts['encoder'], model_dir / 'encoder.pkl')
+            joblib.dump(artifacts['classifier'], model_dir / 'classifier.pkl')
+            logger.info(f"  Saved: preprocessor.pkl, encoder.pkl, classifier.pkl")
+            
+        elif model_name == 'bert':
+            # BERT model saves itself using Hugging Face's save_pretrained
+            bert_model_dir = model_dir / 'bert_model'
+            artifacts['classifier'].save_model(str(bert_model_dir))
+            logger.info(f"  Saved: bert_model/")
+        
+        logger.info(f"  Metadata saved to: {metadata_file}")
+        logger.info(f"  Model directory: {model_dir}")
     
     def _log_summary_statistics(self, model_name: str, df: pd.DataFrame) -> None:
         """

@@ -5,7 +5,6 @@ This module provides the Preprocessor class for cleaning and normalizing texts
 for traditional SVM models. It follows the fit/transform pattern to prevent
 data leakage by fitting only on training data.
 
-Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8
 """
 
 import re

@@ -21,7 +21,7 @@ def verify_visualizer():
     """Verify all visualizer requirements."""
     
     print("=" * 70)
-    print("TASK 16.1: VISUALIZER MODULE VERIFICATION")
+    print(": VISUALIZER MODULE VERIFICATION")
     print("=" * 70)
     
     viz = Visualizer()
@@ -63,54 +63,54 @@ def verify_visualizer():
     print("\n✓ Test data prepared")
     
     # Requirement 9.2: Grouped bar chart comparing F1 and Accuracy
-    print("\n[Requirement 9.2] Testing plot_metrics_comparison()...")
+    print("\n Testing plot_metrics_comparison()...")
     fig1 = viz.plot_metrics_comparison(results, metrics=['accuracy', 'f1_macro'])
     assert fig1 is not None, "Failed to generate metrics comparison plot"
     assert 'metrics_comparison' in viz.figures, "Plot not stored in figures dict"
     print("  ✓ Grouped bar chart generated successfully")
     
     # Requirement 9.3: Styled heatmap confusion matrices
-    print("\n[Requirement 9.3] Testing plot_confusion_matrix()...")
+    print("\n Testing plot_confusion_matrix()...")
     fig2 = viz.plot_confusion_matrix(cm, 'svm_bow')
     assert fig2 is not None, "Failed to generate confusion matrix"
     assert 'confusion_matrix_svm_bow' in viz.figures, "Confusion matrix not stored"
     print("  ✓ Heatmap confusion matrix generated successfully")
     
     # Requirement 9.4: Boxplots showing metric distribution
-    print("\n[Requirement 9.4] Testing plot_boxplots()...")
+    print("\n Testing plot_boxplots()...")
     fig3 = viz.plot_boxplots(simulations_df, metric='f1_macro')
     assert fig3 is not None, "Failed to generate boxplot"
     assert 'boxplot_f1_macro' in viz.figures, "Boxplot not stored"
     print("  ✓ Boxplot showing metric distribution generated successfully")
     
     # Requirement 9.5: Line plots showing metric evolution
-    print("\n[Requirement 9.5] Testing plot_line_evolution()...")
+    print("\n Testing plot_line_evolution()...")
     fig4 = viz.plot_line_evolution(simulations_df, metric='f1_macro')
     assert fig4 is not None, "Failed to generate line evolution plot"
     assert 'line_evolution_f1_macro' in viz.figures, "Line plot not stored"
     print("  ✓ Line plot showing metric evolution generated successfully")
     
     # Requirement 9.6: P-value significance matrix with color coding
-    print("\n[Requirement 9.6] Testing plot_pvalue_matrix()...")
+    print("\n Testing plot_pvalue_matrix()...")
     fig5 = viz.plot_pvalue_matrix(pvalue_matrix, models, metric='f1_macro')
     assert fig5 is not None, "Failed to generate p-value matrix"
     assert 'pvalue_matrix_f1_macro' in viz.figures, "P-value matrix not stored"
     print("  ✓ P-value matrix with color coding (green p<0.05, red p≥0.05) generated")
     
     # Requirement 9.7: Bar charts with 95% confidence intervals
-    print("\n[Requirement 9.7] Testing plot_confidence_intervals()...")
+    print("\n Testing plot_confidence_intervals()...")
     fig6 = viz.plot_confidence_intervals(ci_results, metric='f1_macro', confidence=0.95)
     assert fig6 is not None, "Failed to generate confidence intervals plot"
     assert 'confidence_intervals_f1_macro' in viz.figures, "CI plot not stored"
     print("  ✓ Bar chart with 95% confidence intervals generated successfully")
     
     # Requirement 9.10: Modern visual style (seaborn)
-    print("\n[Requirement 9.10] Verifying professional theme...")
+    print("\n Verifying professional theme...")
     assert hasattr(viz, 'palette'), "Color palette not set"
     print("  ✓ Seaborn professional theme applied")
     
     # Requirement 9.11: Export in high-resolution PNG (300 DPI)
-    print("\n[Requirement 9.11] Testing save_all_figures()...")
+    print("\n Testing save_all_figures()...")
     test_dir = 'results/plots/verification_test'
     viz.save_all_figures(output_dir=test_dir, dpi=300)
     
@@ -169,16 +169,16 @@ def verify_visualizer():
     print("VERIFICATION COMPLETE: ALL REQUIREMENTS MET")
     print("=" * 70)
     print("\nSummary:")
-    print("  ✓ Requirement 9.2: Grouped bar chart for metrics comparison")
-    print("  ✓ Requirement 9.3: Heatmap confusion matrices")
-    print("  ✓ Requirement 9.4: Boxplots for metric distribution")
-    print("  ✓ Requirement 9.5: Line plots for metric evolution")
-    print("  ✓ Requirement 9.6: P-value matrix with color coding")
-    print("  ✓ Requirement 9.7: Confidence intervals (95% CI)")
-    print("  ✓ Requirement 9.9: Training/inference time support (via data input)")
-    print("  ✓ Requirement 9.10: Professional seaborn theme")
-    print("  ✓ Requirement 9.11: High-resolution PNG export (300 DPI)")
-    print("\n✓ Task 16.1 COMPLETE: Visualizer module fully implemented and tested")
+    print("  ✓ Requirement: Grouped bar chart for metrics comparison")
+    print("  ✓ Requirement: Heatmap confusion matrices")
+    print("  ✓ Requirement: Boxplots for metric distribution")
+    print("  ✓ Requirement: Line plots for metric evolution")
+    print("  ✓ Requirement: P-value matrix with color coding")
+    print("  ✓ Requirement: Confidence intervals (95% CI)")
+    print("  ✓ Requirement: Training/inference time support (via data input)")
+    print("  ✓ Requirement: Professional seaborn theme")
+    print("  ✓ Requirement: High-resolution PNG export (300 DPI)")
+    print("\n✓ COMPLETE: Visualizer module fully implemented and tested")
 
 
 if __name__ == "__main__":

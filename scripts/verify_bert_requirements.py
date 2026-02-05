@@ -1,13 +1,13 @@
 """
 Verification script for BERT Classifier implementation.
 
-This script verifies that the BERTClassifier meets all requirements from task 8.1:
-- Requirement 5.1: Load DistilBERT-base model (66M parameters, ~250MB)
-- Requirement 5.2: Use native WordPiece/BPE tokenization without traditional preprocessing
-- Requirement 5.3: Tokenize texts with truncation (max 512 tokens) and padding
-- Requirement 5.4: Fine-tune ONLY on training set with appropriate batch size
-- Requirement 5.5: Use validation set for early stopping
-- Requirement 5.6: Use gradient accumulation or smaller batch size if needed
+This script verifies that the BERTClassifier meets all requirements:
+- Requirement: Load DistilBERT-base model (66M parameters, ~250MB)
+- Requirement: Use native WordPiece/BPE tokenization without traditional preprocessing
+- Requirement: Tokenize texts with truncation (max 512 tokens) and padding
+- Requirement: Fine-tune ONLY on training set with appropriate batch size
+- Requirement: Use validation set for early stopping
+- Requirement: Use gradient accumulation or smaller batch size if needed
 """
 
 from src.bert_classifier import BERTClassifier

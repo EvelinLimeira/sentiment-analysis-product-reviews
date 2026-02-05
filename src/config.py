@@ -10,7 +10,6 @@ parameters for the sentiment analysis experiments, including settings for:
 - In-Context Learning classifier
 - Simulation parameters
 
-Requirements: 10.1
 """
 
 from dataclasses import dataclass, field

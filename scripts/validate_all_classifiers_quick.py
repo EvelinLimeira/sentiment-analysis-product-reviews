@@ -22,7 +22,7 @@ from src.evaluator import Evaluator
 
 def main():
     print("=" * 80)
-    print("TASK 11 CHECKPOINT: QUICK VALIDATION OF ALL CLASSIFIERS")
+    print("QUICK VALIDATION OF ALL CLASSIFIERS")
     print("=" * 80)
     print("\nNOTE: Using small sample for quick validation (CPU-friendly)")
     print("For full evaluation with larger dataset, use GPU and validate_all_classifiers.py")
@@ -47,7 +47,7 @@ def main():
     SAMPLE_SIZE = 1000  # Small sample for quick testing
     TEST_SIZE = 200
     
-    print(f"\n⚠️  Using SMALL SAMPLE for quick validation:")
+    print(f"\n  Using SMALL SAMPLE for quick validation:")
     print(f"  - Training samples: {SAMPLE_SIZE} (from {len(train_df)})")
     print(f"  - Test samples: {TEST_SIZE} (from {len(test_df)})")
     
@@ -175,7 +175,7 @@ def main():
     print("\n" + "=" * 80)
     print("METHOD 3: BERT (DISTILBERT) - QUICK VALIDATION")
     print("=" * 80)
-    print("\n⚠️  Using 1 epoch only for quick validation (CPU)")
+    print("\n  Using 1 epoch only for quick validation (CPU)")
     
     print("\nInitializing BERT classifier...")
     bert = BERTClassifier(
@@ -265,7 +265,7 @@ def main():
     
     print()
     print("=" * 80)
-    print("TASK 11 CHECKPOINT COMPLETE!")
+    print("CHECKPOINT COMPLETE!")
     print("=" * 80)
     print()
     print("✓ All classifiers have been validated successfully on small sample.")

@@ -5,7 +5,6 @@ This module provides the EmbeddingEncoder class for converting texts to
 embedding vectors using pre-trained word embeddings (Word2Vec or GloVe).
 It calculates the mean vector of word embeddings for document representation.
 
-Requirements: 4.1, 4.2, 4.3
 """
 
 from typing import List, Optional

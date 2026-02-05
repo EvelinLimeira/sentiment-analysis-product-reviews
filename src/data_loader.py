@@ -4,7 +4,6 @@ Data loading module for sentiment analysis NLP project.
 This module provides the DataLoader class for loading and preparing product reviews
 datasets with proper train/validation/test splits and label conversion.
 
-Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8
 """
 
 from typing import Dict, List, Optional, Tuple
@@ -291,6 +290,13 @@ class DataLoader:
             
         Validates: Requirements 1.1, 1.2, 1.3, 1.4, 1.5, 1.6
         """
+        # Try to load from local files first (faster, no network needed)
+        try:
+            logger.info(f"Attempting to load local splits (seed={self.random_state})...")
+            return self.load_splits(format='csv')
+        except (FileNotFoundError, Exception) as e:
+            logger.info(f"Local splits not found, loading from source: {e}")
+        
         # Load raw data based on dataset name
         if self.dataset_name.endswith('.csv'):
             self._raw_df = self._load_from_csv(self.dataset_name)
