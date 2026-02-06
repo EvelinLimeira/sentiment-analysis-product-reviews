@@ -342,44 +342,69 @@ class SimulationRunner:
             max_length=self.config.bert_max_length,
             batch_size=self.config.bert_batch_size,
             learning_rate=self.config.bert_learning_rate,
-            num_epochs=self.config.bert_epochs
-        )
-        classifier.fit(
-            train_texts, train_labels.tolist(),
-            val_texts, val_labels.tolist()
-        )
-        training_time = time.time() - start_time
-        
-        # Inference
-        print(f"  [Sim {simulation_id}] Evaluating on test set...", end=" ", flush=True)
-        start_time = time.time()
-        predictions = classifier.predict(test_texts)
-        inference_time = time.time() - start_time
-        
-        # Evaluate
-        evaluator = Evaluator()
-        metrics = evaluator.evaluate(test_labels, predictions, 'bert')
-        print(f"✓ Acc: {metrics['accuracy']:.4f}, F1: {metrics['f1_macro']:.4f}\n")
-        
-        # Package model artifacts
-        model_artifacts = {
-            'classifier': classifier
-        }
-        
-        result = SimulationResult(
-            simulation_id=simulation_id,
-            model_name='bert',
-            random_seed=random_seed,
-            accuracy=metrics['accuracy'],
-            precision_macro=metrics['precision_macro'],
-            recall_macro=metrics['recall_macro'],
-            f1_macro=metrics['f1_macro'],
-            f1_weighted=metrics['f1_weighted'],
-            training_time=training_time,
-            inference_time=inference_time
+            num_epochs=self.config.bert_epochs,
+            patience=self.config.bert_patience  # Use patience from config
         )
         
-        return result, model_artifacts
+        try:
+            classifier.fit(
+                train_texts, train_labels.tolist(),
+                val_texts, val_labels.tolist()
+            )
+            training_time = time.time() - start_time
+            
+            # Inference
+            print(f"  [Sim {simulation_id}] Evaluating on test set...", end=" ", flush=True)
+            start_time = time.time()
+            predictions = classifier.predict(test_texts)
+            inference_time = time.time() - start_time
+            
+            # Evaluate
+            evaluator = Evaluator()
+            metrics = evaluator.evaluate(test_labels, predictions, 'bert')
+            print(f"✓ Acc: {metrics['accuracy']:.4f}, F1: {metrics['f1_macro']:.4f}\n")
+            
+            # Package model artifacts
+            model_artifacts = {
+                'classifier': classifier
+            }
+            
+            result = SimulationResult(
+                simulation_id=simulation_id,
+                model_name='bert',
+                random_seed=random_seed,
+                accuracy=metrics['accuracy'],
+                precision_macro=metrics['precision_macro'],
+                recall_macro=metrics['recall_macro'],
+                f1_macro=metrics['f1_macro'],
+                f1_weighted=metrics['f1_weighted'],
+                training_time=training_time,
+                inference_time=inference_time
+            )
+            
+            return result, model_artifacts
+            
+        except Exception as e:
+            # If training fails, still return a result with error info
+            logger.error(f"Error in BERT training for simulation {simulation_id}: {e}")
+            training_time = time.time() - start_time
+            
+            # Return a failed result with zero metrics
+            result = SimulationResult(
+                simulation_id=simulation_id,
+                model_name='bert',
+                random_seed=random_seed,
+                accuracy=0.0,
+                precision_macro=0.0,
+                recall_macro=0.0,
+                f1_macro=0.0,
+                f1_weighted=0.0,
+                training_time=training_time,
+                inference_time=0.0
+            )
+            
+            # Re-raise the exception so it's caught by the outer try-except
+            raise
     
     def run_simulations(
         self,

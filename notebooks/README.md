@@ -16,10 +16,16 @@ Python script with notebook cells (use `# %%` markers). Can be:
 3. Text Preprocessing
 4. SVM + Bag of Words
 5. SVM + Embeddings
-6. BERT Classifier
+6. BERT Classifier (10 epochs, batch 32, early stopping)
 7. Comparison and Visualizations
 8. Advanced NLP Analysis
 9. Conclusions
+
+**Key Features:**
+- 10 simulations with different data splits (seeds 42-51)
+- BERT: 10 epochs, batch size 32, early stopping (patience=3)
+- Statistical validation with Wilcoxon and Kruskal-Wallis tests
+- Advanced analyses: typos, sarcasm, formality, text length
 
 ## Usage
 

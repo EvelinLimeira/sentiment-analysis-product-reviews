@@ -1,0 +1,4 @@
+model,accuracy_with_emoji,accuracy_without_emoji,difference,count_with_emoji,count_without_emoji
+svm_bow,,0.7926666666666666,,0,1500
+svm_embeddings,,0.7653333333333333,,0,1500
+bert,,0.9033333333333333,,0,1500

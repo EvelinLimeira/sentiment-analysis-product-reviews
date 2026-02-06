@@ -89,6 +89,41 @@ Demonstrates visualization generation.
 python scripts/demo_visualizer_integration.py
 ```
 
+### Visualization Scripts
+
+#### generate_visualizations.py
+Generates comprehensive visualizations from simulation results.
+
+**Usage:**
+```bash
+python scripts/generate_visualizations.py
+```
+
+**Generates:**
+- Boxplots comparison
+- Metrics comparison bar chart
+- Confidence intervals
+- Evolution plots
+- Summary statistics CSV
+
+#### generate_radar_plot.py
+Generates radar (spider) plots for multi-dimensional model comparison.
+
+**Usage:**
+```bash
+python scripts/generate_radar_plot.py
+```
+
+**Generates:**
+- `radar_comparison.png` - Standard metrics (Accuracy, Precision, Recall, F1)
+- `radar_advanced_analysis.png` - Robustness across text characteristics
+
+**Features:**
+- Multi-dimensional visualization
+- Compares all models simultaneously
+- Shows performance across different metrics
+- Useful for presentations and reports
+
 ## Script Categories
 
 ### Verification (3 scripts)
@@ -99,6 +134,9 @@ End-to-end pipeline validation with model training.
 
 ### Demo (4 scripts)
 Demonstrations of individual module functionality.
+
+### Visualization (2 scripts)
+Generate plots and charts from results.
 
 ## Adding New Scripts
 

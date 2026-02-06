@@ -1,0 +1,10 @@
+model,formality,accuracy,count
+svm_bow,formal,0.7833456153279292,1357
+svm_bow,informal,0.8695652173913043,92
+svm_bow,excited,0.9019607843137255,51
+svm_embeddings,formal,0.7619749447310243,1357
+svm_embeddings,informal,0.782608695652174,92
+svm_embeddings,excited,0.8235294117647058,51
+bert,formal,0.9034635224760501,1357
+bert,informal,0.8804347826086957,92
+bert,excited,0.9411764705882353,51

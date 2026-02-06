@@ -50,6 +50,7 @@ class ExperimentConfig:
         bert_batch_size: Batch size for BERT training
         bert_epochs: Number of training epochs for BERT
         bert_learning_rate: Learning rate for BERT fine-tuning
+        bert_patience: Early stopping patience (epochs without improvement)
         
         # ICL parameters
         icl_model: LLM model name for in-context learning
@@ -82,6 +83,7 @@ class ExperimentConfig:
     bert_batch_size: int = 32
     bert_epochs: int = 10
     bert_learning_rate: float = 2e-5
+    bert_patience: int = 3  # Early stopping patience
     
     # ICL configuration
     icl_model: str = 'gpt-3.5-turbo'

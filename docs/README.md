@@ -17,6 +17,9 @@ docs/
 ## Quick Links
 
 - [Quick Start Guide](guides/quick-start.md) - Get started with data handling
+- [BERT Training Guide](guides/bert-training.md) - BERT configuration and optimization
+- [Interactive Demo Guide](guides/interactive-demo.md) - Test models with your own reviews
+- [Colab Troubleshooting](guides/colab-troubleshooting.md) - Fix common Colab issues
 - [Data Structure](architecture/data-structure.md) - Understand folder organization
 - [Data Flow](architecture/data-flow.md) - See how data moves through the pipeline
 - [Visualizer Guide](guides/visualizer.md) - Create visualizations

@@ -14,10 +14,15 @@
 # 3. **BERT (DistilBERT)**
 # 
 # The analysis includes:
-# - Multiple simulation runs for statistical validation
-# - Statistical significance testing
-# - Advanced NLP analyses
+# - 10 simulation runs with different data splits (seeds 42-51) for statistical validation
+# - Statistical significance testing (Wilcoxon, Kruskal-Wallis)
+# - Advanced NLP analyses (length, typos, emojis, sarcasm, formality)
 # - Professional visualizations
+# 
+# **BERT Configuration:**
+# - 10 epochs with early stopping (patience=3)
+# - Batch size: 32
+# - Learning rate: 2e-5
 
 # %% [markdown]
 # ## Section 1: Imports and Configuration

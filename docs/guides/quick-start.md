@@ -89,10 +89,10 @@ train_df, val_df, test_df = loader.load_splits(format='csv')
 
 ## Multiple Simulations
 
-For statistical validation with multiple seeds:
+For statistical validation with 10 different seeds (42-51):
 
 ```python
-seeds = [42, 123, 456, 789, 1011]
+seeds = range(42, 52)  # Seeds 42-51 for 10 simulations
 
 for seed in seeds:
     loader = DataLoader(random_state=seed)
@@ -104,7 +104,9 @@ for seed in seeds:
 ```
 
 This creates separate files for each seed:
-- `train_seed42.csv`, `train_seed123.csv`, etc.
+- `train_seed42.csv`, `train_seed43.csv`, ..., `train_seed51.csv`
+
+**Note:** 10 simulations provide sufficient statistical power for validation with Wilcoxon and Kruskal-Wallis tests.
 
 ## File Naming Convention
 
@@ -126,10 +128,11 @@ Examples:
 
 ## Benefits
 
-✓ **No Data Leakage**: Physical separation prevents accidental mixing
-✓ **Reproducible**: Seed-based filenames track exact splits
-✓ **Organized**: Clear flow from raw → processed → perturbed
-✓ **Scalable**: Easy to manage 10-30 simulations
+- **No Data Leakage**: Physical separation prevents accidental mixing
+- **Reproducible**: Seed-based filenames track exact splits
+- **Organized**: Clear flow from raw → processed → perturbed
+- **Scalable**: Easy to manage 10 simulations with different data splits
+- **Statistical Validity**: 10 simulations provide sufficient power for significance testing
 
 ## Tips
 

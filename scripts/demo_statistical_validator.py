@@ -5,10 +5,15 @@ This script demonstrates how to use the StatisticalValidator class
 to perform statistical significance tests on model comparison results.
 """
 
+import sys
+from pathlib import Path
+
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import numpy as np
 import pandas as pd
 import os
-from pathlib import Path
 from src.statistical_validator import StatisticalValidator
 
 

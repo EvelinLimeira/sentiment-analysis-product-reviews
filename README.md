@@ -11,10 +11,11 @@ This project implements and compares four sentiment classification approaches:
 - **In-Context Learning (Bonus)**: Few-shot learning with LLMs
 
 The project emphasizes **scientific rigor** through:
-- Multiple simulation runs (10-30) with different random seeds
+- 10 simulation runs with different random seeds (42-51)
 - Statistical validation (Wilcoxon, Kruskal-Wallis tests)
 - Advanced NLP analyses (text length, typos, emojis, sarcasm, formality)
 - Professional visualizations for academic presentation
+- BERT optimization: 10 epochs, batch size 32, early stopping (patience=3)
 
 ## Key Features
 
@@ -105,6 +106,9 @@ Run the project in your browser with free GPU access:
 1. Open [sentiment_analysis_colab.ipynb](notebooks/sentiment_analysis_colab.ipynb) in Google Colab
 2. Select GPU runtime: `Runtime` → `Change runtime type` → `GPU`
 3. Run all cells
+4. **Try the interactive demo** in Section 11 to test models with your own reviews!
+
+**Troubleshooting:** If you encounter issues with results not being saved or other Colab-specific problems, see the [Colab Troubleshooting Guide](docs/guides/colab-troubleshooting.md).
 
 #### Option 2: Local Installation
 
@@ -264,12 +268,106 @@ See `requirements.txt` for complete list with versions.
 Comprehensive documentation is available in the `docs/` directory:
 
 - **[Quick Start Guide](docs/guides/quick-start.md)** - Get started quickly
+- **[BERT Training Guide](docs/guides/bert-training.md)** - BERT configuration and optimization
+- **[Interactive Demo Guide](docs/guides/interactive-demo.md)** - Test models with your own reviews
+- **[Colab Troubleshooting](docs/guides/colab-troubleshooting.md)** - Fix common Colab issues
 - **[Data Structure](docs/architecture/data-structure.md)** - Folder organization
 - **[Data Flow](docs/architecture/data-flow.md)** - Pipeline visualization
 - **[Visualizer Guide](docs/guides/visualizer.md)** - Create visualizations
 - **[Examples](docs/examples/)** - Working code examples
 
 See [docs/README.md](docs/README.md) for complete documentation index.
+
+---
+
+## 📊 Experiment Results
+
+### Executive Summary
+
+We conducted a comparison of three sentiment classification approaches using **10 independent simulations** with different data splits (seeds 42-51) to ensure statistical validity. All results are statistically significant (p < 0.05).
+
+### Performance Comparison
+
+| Model | Accuracy | F1-Score | Precision | Recall | Train Time |
+|-------|----------|----------|-----------|--------|------------|
+| **BERT (DistilBERT)** | **91.58% ± 0.80%** | **91.58% ± 0.80%** | **91.61% ± 0.79%** | **91.58% ± 0.79%** | ~8.6 min |
+| SVM + Bag of Words | 85.90% ± 1.45% | 84.38% ± 2.29% | 82.42% ± 1.51% | 85.56% ± 1.63% | ~1.6 min |
+| SVM + Embeddings | 79.97% ± 1.76% | 79.70% ± 1.31% | 78.90% ± 2.71% | 81.20% ± 1.48% | ~2.0 min |
+
+**Key Findings:**
+- BERT achieves **+7.20% F1-Score improvement** over SVM+BoW
+- All differences are **statistically significant** (Wilcoxon test, p < 0.002)
+- BERT shows **lower variance**, indicating more stable performance
+- 95% Confidence Interval for BERT F1-Score: **[91.28%, 91.87%]**
+
+### Visualizations
+
+#### Model Performance Comparison
+![Metrics Comparison](results/plots/metrics_comparison.png)
+*Comparison of accuracy and F1-score across all models*
+
+#### Radar Plot - Overall Performance
+![Radar Comparison](results/plots/radar_comparison.png)
+*Multi-dimensional comparison across Accuracy, Precision, Recall, and F1-Score*
+
+#### Statistical Distribution
+![Boxplots Comparison](results/plots/boxplots_comparison.png)
+*Distribution of accuracy and F1-score across 10 simulations*
+
+#### Confidence Intervals
+![Confidence Intervals](results/plots/confidence_intervals_f1_macro.png)
+*95% confidence intervals showing non-overlapping ranges*
+
+#### Statistical Significance
+![P-value Matrix](results/plots/pvalue_matrix_f1_macro.png)
+*Pairwise statistical tests (Wilcoxon) - all p-values < 0.05*
+
+### Advanced Analysis Results
+
+#### Robustness to Typos
+| Model | Original Accuracy | With 5% Typos | Degradation |
+|-------|-------------------|---------------|-------------|
+| **BERT** | 90.33% | 89.93% | **0.44%** |
+| SVM+Embeddings | 76.53% | 75.93% | 0.78% |
+| SVM+BoW | 79.27% | 79.40% | -0.17% |
+
+![Typo Robustness](results/plots/advanced_analysis/typo_robustness.png)
+
+#### Sarcasm Detection
+| Model | Sarcasm Accuracy | Normal Accuracy | Degradation |
+|-------|------------------|-----------------|-------------|
+| **BERT** | **88.00%** | 90.41% | **2.67%** |
+| SVM+Embeddings | 60.00% | 77.10% | 22.18% |
+| SVM+BoW | 56.00% | 80.07% | 30.06% |
+
+![Sarcasm Analysis](results/plots/advanced_analysis/sarcasm_analysis.png)
+
+#### Formality Sensitivity
+| Model | Formal | Informal | Excited |
+|-------|--------|----------|---------|
+| **BERT** | **90.35%** | **88.04%** | **94.12%** |
+| SVM+BoW | 78.33% | 86.96% | 90.20% |
+| SVM+Embeddings | 76.20% | 78.26% | 82.35% |
+
+![Formality Analysis](results/plots/advanced_analysis/formality_heatmap.png)
+
+#### Radar Plot - Robustness Analysis
+![Radar Advanced](results/plots/radar_advanced_analysis.png)
+*Model robustness across different text characteristics (normal, typos, sarcasm, formality)*
+
+### Methodology
+
+- **10 simulations** with different random seeds (42-51) for statistical validity
+- Each simulation uses a **different data split** to test generalization
+- **Statistical tests:** Wilcoxon (pairwise), Kruskal-Wallis (multiple groups)
+- **Significance level:** α = 0.05 (95% confidence)
+- **BERT configuration:** 10 epochs, batch size 32, early stopping (patience=3)
+
+### Complete Report
+
+For detailed methodology, statistical analysis, and discussion, see the complete [Experiment Report](EXPERIMENT_REPORT.md).
+
+---
 
 ## Contributing
 
